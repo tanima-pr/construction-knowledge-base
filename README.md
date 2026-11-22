@@ -95,6 +95,14 @@ Remaining errors: the two false refusals are paraphrases ("climb or descend" vs 
 down"; "words the code does not define" vs "undefined terms"), and one cost question still slips through.
 The same keyword limitation explains most page misses, so meaning-based (embedding) search is the next step.
 
+## Power BI report
+
+`docs/ckb-report.pbix` (built from `exports/ckb_powerbi.xlsx`, regenerated with `python -m ckb powerbi`):
+
+- **Page 1, Governance and search quality:** sources catalogued, chunks indexed, page accuracy, refusal before
+  and after the coverage check, the threshold trade-off, and the questions where search missed the page.
+- **Page 2, BIM model quality:** completeness by model and the architectural vs structural wall comparison.
+
 ## BIM model results
 
 Two discipline models of the same sample house (architectural and structural) were loaded with IfcOpenShell.
