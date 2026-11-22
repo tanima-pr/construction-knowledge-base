@@ -128,3 +128,14 @@ def test_refuses_when_question_words_are_missing(corpus):
     assert answer(q, hits)["answer"] == NOT_FOUND        # coverage check refuses
     q2 = "Where must thermal insulation be installed?"
     assert answer(q2, idx.search(q2))["answer"] != NOT_FOUND
+
+
+def test_non_pdf_sources_are_catalogued_not_indexed(corpus):
+    reg = corpus / "sources" / "register.csv"
+    reg.write_text(reg.read_text() + "model-1,Test Model,Issuer,bim-model,IFC4,2026,https://x,CC BY 4.0,public,model.ifc\n")
+    (corpus / "data" / "raw" / "model.ifc").write_text("ISO-10303-21;\nEND-ISO-10303-21;\n")
+    summary = build(corpus, verbose=False)
+    assert summary["catalogued_only"] == ["model-1"]
+    con = connect(corpus / "data" / "ckb.duckdb")
+    assert con.execute("SELECT status FROM catalog WHERE doc_id='model-1'").fetchone()[0] == "ok"
+    assert con.execute("SELECT count(*) FROM chunks WHERE doc_id='model-1'").fetchone()[0] == 0

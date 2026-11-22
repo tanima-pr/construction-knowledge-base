@@ -1,0 +1,17 @@
+model,storey,ifc_class,elements,area,volume,length
+bsi-building-architecture-ifc4,00 groundfloor,IfcChimney,1,,,
+bsi-building-architecture-ifc4,00 groundfloor,IfcSlab,1,25.75,6.4375,
+bsi-building-architecture-ifc4,00 groundfloor,IfcWall,4,43.291413,7.450468000000001,15.8
+bsi-building-architecture-ifc4,environment - site,IfcBuildingElementProxy,1,,,
+bsi-building-architecture-ifc4,house - site,IfcBuildingElementProxy,2,,,
+bsi-building-architecture-ifc4,house - site,IfcRoof,1,,,
+bsi-building-architecture-ifc4,house - site,IfcSlab,2,53.612836,16.083851,
+bsi-building-architecture-ifc4,living room,IfcFurniture,1,,,
+bsi-building-structural-ifc4,00 groundfloor,IfcChimney,1,,,
+bsi-building-structural-ifc4,00 groundfloor,IfcFooting,1,,,
+bsi-building-structural-ifc4,00 groundfloor,IfcWall,4,55.040451,11.008089,14.200000000000001
+bsi-building-structural-ifc4,environment - site,IfcBuildingElementProxy,1,,,
+bsi-building-structural-ifc4,house - site,IfcBeam,6,,0.494,24.7
+bsi-building-structural-ifc4,house - site,IfcBuildingElementProxy,1,,,
+bsi-building-structural-ifc4,house - site,IfcDiscreteAccessory,2,,,
+bsi-building-structural-ifc4,house - site,IfcRoof,1,,,

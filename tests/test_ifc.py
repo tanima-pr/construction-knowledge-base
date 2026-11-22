@@ -43,6 +43,11 @@ def test_ifc_extract_counts_and_quantities(tmp_path):
     assert ("Ground", "IfcWall", 3, 7.5) in rows
     assert ("Level 2", "IfcWall", 2, 5.0) in rows
     assert ("Ground", "IfcSlab", 1, None) in rows
+    # model lengths are millimetres; stored values are converted to metres
+    lengths = con.execute("SELECT DISTINCT value, unit FROM ifc_quantities WHERE quantity = 'Length'").fetchall()
+    assert lengths == [(0.004, "m")]
+    q = con.execute("SELECT elements, share_with_storey, share_with_material, share_proxy FROM ifc_quality").fetchone()
+    assert q == (6, 1.0, round(5 / 6, 3), 0.0)
     assert con.execute("SELECT DISTINCT material FROM ifc_elements WHERE ifc_class='IfcWall'").fetchone()[0] == "Concrete"
     # reloading the same model replaces rather than duplicates
     load(con, model)

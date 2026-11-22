@@ -1,4 +1,6 @@
 doc_id,title,doc_type,access_level,status,chunks,pages_with_text,sections
+bsi-building-architecture-ifc4,Sample house - architectural model (Building-Architecture.ifc),bim-model,public,ok,0,0,0
+bsi-building-structural-ifc4,Sample house - structural model (Building-Structural.ifc),bim-model,public,ok,0,0,0
 ic-roadmap-2025,Roadmap to Transform the Canadian Construction Industry through Industrialized Construction Research and Innovation,report,public,ok,123,72,34
 ic-roadmap-2025-summary,Roadmap to Transform the Canadian Construction Industry - Summary,summary,public,ok,2,2,0
 nbc-2025,National Building Code of Canada 2025,code,public,ok,4049,1672,1758

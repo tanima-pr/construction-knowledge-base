@@ -45,7 +45,10 @@ def main() -> None:
         out = ROOT / "exports"
         out.mkdir(exist_ok=True)
         con.execute(f"COPY (SELECT * FROM ifc_summary) TO '{out / 'ifc_summary.csv'}' (HEADER)")
-        print(con.execute("SELECT * FROM ifc_summary").df().to_string(index=False))
+        con.execute(f"COPY (SELECT * FROM ifc_quality) TO '{out / 'ifc_quality.csv'}' (HEADER)")
+        print(con.execute("SELECT * FROM ifc_summary WHERE model = ?", [args.path.stem]).df().to_string(index=False))
+        print()
+        print(con.execute("SELECT * FROM ifc_quality").df().to_string(index=False))
         return
 
     index = BM25Index(search_rows(con))

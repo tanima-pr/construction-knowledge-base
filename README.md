@@ -26,18 +26,24 @@ it changed, who may see it, and how well the search actually works.
 
 ```bash
 pip install -r requirements.txt
-pytest -q                      # 14 tests on generated PDFs and a generated IFC model
+pytest -q                      # 15 tests on generated PDFs and a generated IFC model
 
 # 1. Download the PDFs listed in sources/register.csv into data/raw/ (names must match local_file)
 # 2. Fill any blank required fields (the build tells you which)
 PYTHONPATH=src python -m ckb build
 PYTHONPATH=src python -m ckb ask "What does industrialized construction mean?"
 PYTHONPATH=src python -m ckb eval                       # after writing eval/questions.csv
-PYTHONPATH=src python -m ckb ifc data/raw/<model>.ifc   # any IFC2x3/IFC4 sample model
+PYTHONPATH=src python -m ckb ifc data/raw/bsi-building-architecture-ifc4.ifc
+PYTHONPATH=src python -m ckb ifc data/raw/bsi-building-structural-ifc4.ifc
 ```
 
 Sample IFC models: [buildingSMART Sample-Test-Files](https://github.com/buildingSMART/Sample-Test-Files),
 [IfcOpenShell test files](https://github.com/IfcOpenShell/files).
+
+IFC models used: `Building-Architecture.ifc` and `Building-Structural.ifc` (IFC4) from buildingSMART
+International's Sample-Test-Files, (c) buildingSMART International Ltd., licensed under
+[CC BY 4.0](http://creativecommons.org/licenses/by/4.0/). Download them into `data/raw/` with the names
+in `sources/register.csv`.
 
 Source PDFs and models are **not committed** (see `.gitignore`); the register records where to get each one.
 
@@ -51,7 +57,7 @@ src/ckb/ingest.py        PDF text extraction and page-aware chunking
 src/ckb/search.py        BM25 ranking with access-level filter
 src/ckb/answer.py        cited answers, refusal, LLM guardrail
 src/ckb/evaluate.py      retrieval metrics
-src/ckb/ifc_extract.py   IFC elements and quantities -> DuckDB
+src/ckb/ifc_extract.py   IFC elements and quantities -> DuckDB (SI units, quality view)
 src/ckb/pipeline.py      build + CSV exports
 tests/                   pytest suite (runs in GitHub Actions)
 ```
@@ -88,6 +94,26 @@ tuned on the same 30 questions, so it should be confirmed on new questions befor
 Remaining errors: the two false refusals are paraphrases ("climb or descend" vs the code's "travel up or
 down"; "words the code does not define" vs "undefined terms"), and one cost question still slips through.
 The same keyword limitation explains most page misses, so meaning-based (embedding) search is the next step.
+
+## BIM model results
+
+Two discipline models of the same sample house (architectural and structural) were loaded with IfcOpenShell.
+
+**Units.** Both models store lengths in millimetres but areas and volumes in m2/m3. Every quantity is
+converted to SI using the model's declared units before it is stored, so totals can be compared and summed.
+Each summary column also uses one measure only (e.g. wall run length, not slab thickness; surface area, not
+beam cross-section), so different measures are never added together.
+
+**Model completeness** (`exports/ifc_quality.csv`):
+
+| Model | Elements | With storey | With material | With quantities | Generic proxies |
+|---|---|---|---|---|---|
+| Architectural | 13 | 100% | 92% | 54% | 23% |
+| Structural | 17 | 100% | 94% | 59% | 12% |
+
+**Cross-model check.** Both models contain the same 4 ground-floor walls, but they disagree: 15.8 m and
+7.45 m3 in the architectural model vs 14.2 m and 11.0 m3 in the structural one. A difference like this is
+what a coordination review between disciplines would need to resolve before quantities are used for costing.
 
 ## Limitations
 

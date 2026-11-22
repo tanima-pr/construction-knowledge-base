@@ -20,12 +20,16 @@ def build(root: Path, db_path: Path | None = None, verbose: bool = True) -> dict
 
     last_ingested = dict(con.execute(
         "SELECT doc_id, arg_max(sha256, ingested_at) FROM ingest_log GROUP BY doc_id").fetchall())
-    summary = {"ingested": [], "skipped_unchanged": [], "missing_file": [], "invalid": []}
+    summary = {"ingested": [], "skipped_unchanged": [], "catalogued_only": [], "missing_file": [], "invalid": []}
 
     for s in sources:
         if s.status in ("missing_file", "invalid"):
             summary[s.status].append(s.doc_id)
             con.execute("DELETE FROM chunks WHERE doc_id = ?", [s.doc_id])
+            continue
+        if not s.local_file.lower().endswith(".pdf"):
+            # e.g. IFC models: registered and fingerprinted, loaded with `ckb ifc`, not text-indexed
+            summary["catalogued_only"].append(s.doc_id)
             continue
         if last_ingested.get(s.doc_id) == s.sha256:
             summary["skipped_unchanged"].append(s.doc_id)
