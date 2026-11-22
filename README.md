@@ -17,7 +17,7 @@ it changed, who may see it, and how well the search actually works.
 | Fingerprint | SHA-256 of every PDF on each build | A replaced file is flagged `changed` and re-ingested; unchanged files are skipped |
 | Ingest | Text extracted page by page, split on paragraph boundaries, never across pages | Each chunk keeps its page and the nearest code article (e.g. `9.10.14.5`) |
 | Search | BM25 keyword ranking, filtered by access level | `internal` documents are hidden unless explicitly requested |
-| Answer | Top passages with `[doc p.N, section]` citations, or "Not found" below a score threshold | Optional LLM hook only sees retrieved passages; uncited model answers are discarded |
+| Answer | Top passages with `[doc p.N, section]` citations, or "Not found" when no passage covers enough of the question | Optional LLM hook only sees retrieved passages; uncited model answers are discarded |
 | Evaluate | Hand-checked question set → hit@1, hit@5, page hit@5, MRR, refusal rate | Search quality is measured, not assumed |
 | IFC | IfcOpenShell reads walls, slabs, etc. with storey, type, material and quantities | Same database, so documents and model data sit side by side |
 | Export | `exports/*.csv` (catalog health, coverage, eval results, IFC summary) | Ready for a Power BI report |
@@ -26,7 +26,7 @@ it changed, who may see it, and how well the search actually works.
 
 ```bash
 pip install -r requirements.txt
-pytest -q                      # 11 tests on generated PDFs and a generated IFC model
+pytest -q                      # 14 tests on generated PDFs and a generated IFC model
 
 # 1. Download the PDFs listed in sources/register.csv into data/raw/ (names must match local_file)
 # 2. Fill any blank required fields (the build tells you which)
@@ -58,11 +58,36 @@ tests/                   pytest suite (runs in GitHub Actions)
 
 ## Results
 
-_Fill in after running on the real documents:_
+Corpus: NBC 2025 (1,693 pages), NRC/UNB industrialized construction roadmap (97 pages) and its 2-page summary,
+about 4,170 chunks. Question set: 30 hand-checked questions in `eval/questions.csv` (25 answerable, 5 not
+covered by the documents), each with the page and the line that answers it.
 
-| Documents | Pages | Chunks | Questions | hit@1 | hit@5 | Page hit@5 | Refusal rate |
-|---|---|---|---|---|---|---|---|
-| | | | | | | | |
+| Version | hit@1 | Page hit@5 | MRR | Refusal (should refuse) | False refusal (should answer) |
+|---|---|---|---|---|---|
+| Baseline: BM25 + score cut-off | 0.88 | 0.80 | 0.93 | 0.00 | 0.00 |
+| + coverage check (threshold 0.45) | 0.88 | 0.80 | 0.93 | **0.80** | 0.08 |
+
+### Refusal threshold
+
+BM25 scores are not comparable across questions, so a score cut-off never refused anything: a question
+about Toronto zoning still returned building-code passages. The coverage check asks whether any retrieved
+passage contains most of the question's informative words, weighted by rarity; words the corpus never uses
+count as fully missing.
+
+| Threshold | Refusal | False refusal |
+|---|---|---|
+| 0.30 | 0.40 | 0.04 |
+| 0.40 | 0.60 | 0.08 |
+| **0.45** | **0.80** | **0.08** |
+| 0.50 | 1.00 | 0.16 |
+| 0.60 | 1.00 | 0.32 |
+
+0.45 was chosen as a round value in the gap between the two groups, not the single best point. It was
+tuned on the same 30 questions, so it should be confirmed on new questions before relying on it.
+
+Remaining errors: the two false refusals are paraphrases ("climb or descend" vs the code's "travel up or
+down"; "words the code does not define" vs "undefined terms"), and one cost question still slips through.
+The same keyword limitation explains most page misses, so meaning-based (embedding) search is the next step.
 
 ## Limitations
 

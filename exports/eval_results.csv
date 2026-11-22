@@ -7,8 +7,8 @@ What is the minimum height for guards outside dwelling units?,nbc-2025,891,yes,1
 Where are smoke alarms required in residential buildings?,nbc-2025,939,yes,1,nbc-2025,941,False,False
 Which standard must smoke alarms conform to?,nbc-2025,939,yes,1,nbc-2025,939,True,False
 How does the code protect homes from radon coming in from the ground?,nbc-2025,952,yes,1,nbc-2025,1503,True,False
-In a two-storey home how far may you have to climb or descend to reach an exit?,nbc-2025,903,yes,1,nbc-2025,903,True,False
-How should words that the code does not define be interpreted?,nbc-2025,26,yes,1,nbc-2025,670,False,False
+In a two-storey home how far may you have to climb or descend to reach an exit?,nbc-2025,903,yes,1,nbc-2025,903,True,True
+How should words that the code does not define be interpreted?,nbc-2025,26,yes,1,nbc-2025,670,False,True
 What are the four categories of industrialized construction?,ic-roadmap-2025,12,yes,2,ic-roadmap-2025-summary,1,False,False
 What is the difference between volumetric and panelized off-site construction?,ic-roadmap-2025,12,yes,1,ic-roadmap-2025,88,True,False
 What barriers to off-site construction does the literature identify?,ic-roadmap-2025,13,yes,1,ic-roadmap-2025,4,False,False
@@ -24,8 +24,8 @@ What role do the regional spokes play in the proposed hub-and-spoke model?,ic-ro
 Who prepared the industrialized construction roadmap and for which NRC program?,ic-roadmap-2025,2,yes,1,ic-roadmap-2025,2,True,False
 Which roadmap initiative addresses inefficiencies in building codes?,ic-roadmap-2025,35,yes,1,ic-roadmap-2025,81,False,False
 What immediate next steps involve a national construction productivity framework?,ic-roadmap-2025,67,yes,1,ic-roadmap-2025,67,True,False
-What is the average hourly wage of a modular factory worker in Ottawa?,,,no,,ic-roadmap-2025,22,,False
-Which construction firm won the 2026 Canadian modular housing award?,,,no,,ic-roadmap-2025,21,,False
+What is the average hourly wage of a modular factory worker in Ottawa?,,,no,,ic-roadmap-2025,22,,True
+Which construction firm won the 2026 Canadian modular housing award?,,,no,,ic-roadmap-2025,21,,True
 How much does a volumetric modular home cost per square foot in Ontario?,,,no,,ic-roadmap-2025,24,,False
-What is the maximum building height allowed by the City of Toronto zoning bylaw?,,,no,,ic-roadmap-2025,76,,False
-How much funding did the NRC allocate to industrialized construction research in 2026?,,,no,,ic-roadmap-2025,67,,False
+What is the maximum building height allowed by the City of Toronto zoning bylaw?,,,no,,ic-roadmap-2025,76,,True
+How much funding did the NRC allocate to industrialized construction research in 2026?,,,no,,ic-roadmap-2025,67,,True

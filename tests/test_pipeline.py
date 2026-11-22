@@ -116,3 +116,15 @@ def test_table_of_contents_and_fragments_dropped():
     assert clean(toc) == ""
     chunks = chunk_pages("doc", ["s. 9", "A real paragraph about volumetric modular construction in factories."])
     assert [c.page for c in chunks] == [2]
+
+
+def test_refuses_when_question_words_are_missing(corpus):
+    build(corpus, verbose=False)
+    idx = _index(corpus)
+    # shares "modular" with the corpus, but "toronto", "zoning", "bylaw" never appear
+    q = "What does the Toronto zoning bylaw say about modular units?"
+    hits = idx.search(q)
+    assert hits and hits[0].score > 0                   # BM25 alone would answer
+    assert answer(q, hits)["answer"] == NOT_FOUND        # coverage check refuses
+    q2 = "Where must thermal insulation be installed?"
+    assert answer(q2, idx.search(q2))["answer"] != NOT_FOUND

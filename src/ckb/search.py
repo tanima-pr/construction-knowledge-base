@@ -29,6 +29,7 @@ class Hit:
     section: str | None
     text: str
     score: float
+    coverage: float = 0.0   # share of the query's IDF weight found in this chunk (0-1)
 
 
 class BM25Index:
@@ -44,6 +45,17 @@ class BM25Index:
             df.update(tf.keys())
         n = len(rows)
         self.idf = {t: math.log(1 + (n - d + 0.5) / (d + 0.5)) for t, d in df.items()}
+        # a word the corpus never uses is maximally informative: missing it should hurt coverage most
+        self.unseen_idf = math.log(1 + (n + 0.5) / 0.5) if rows else 0.0
+
+    def coverage(self, query_terms: list[str], i: int) -> float:
+        """IDF-weighted share of distinct query terms present in chunk i."""
+        terms = set(query_terms)
+        if not terms:
+            return 0.0
+        total = sum(self.idf.get(t, self.unseen_idf) for t in terms)
+        found = sum(self.idf[t] for t in terms if t in self.tfs[i])
+        return found / total
 
     def search(self, query: str, k: int = 5, allowed_access: set[str] | None = None) -> list[Hit]:
         allowed_access = allowed_access or {"public"}
@@ -62,7 +74,8 @@ class BM25Index:
                 scored.append((s, i))
         scored.sort(reverse=True)
         return [
-            Hit(r["chunk_id"], r["doc_id"], r["title"], r["page"], r.get("section"), r["text"], round(s, 3))
+            Hit(r["chunk_id"], r["doc_id"], r["title"], r["page"], r.get("section"), r["text"], round(s, 3),
+                round(self.coverage(q, i), 3))
             for s, i in scored[:k]
             for r in [self.rows[i]]
         ]

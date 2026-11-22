@@ -28,10 +28,19 @@ def cite(hit: Hit) -> str:
     return f"[{hit.doc_id} p.{hit.page}{sec}]"
 
 
-def answer(question: str, hits: list[Hit], min_score: float = 1.0,
+MIN_COVERAGE = 0.45   # chosen on eval/questions.csv; see README "Refusal threshold"
+
+
+def answer(question: str, hits: list[Hit], min_score: float = 1.0, min_coverage: float = MIN_COVERAGE,
            llm: Callable[[str], str] | None = None, max_passages: int = 3) -> dict:
+    """Refuse unless some retrieved passage covers enough of the question's informative words.
+
+    BM25 scores are not comparable across questions, so a score cut-off alone cannot tell
+    "weak match" from "no match". Coverage asks a simpler question: does any passage contain
+    most of what the question is about (weighted by how rare each word is)?
+    """
     usable = [h for h in hits if h.score >= min_score][:max_passages]
-    if not usable:
+    if not usable or max(h.coverage for h in usable) < min_coverage:
         return {"question": question, "answer": NOT_FOUND, "citations": []}
 
     citations = [{"doc_id": h.doc_id, "title": h.title, "page": h.page, "section": h.section, "score": h.score} for h in usable]
