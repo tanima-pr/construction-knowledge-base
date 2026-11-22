@@ -4,6 +4,7 @@
   python -m ckb ask "question" [--internal]
   python -m ckb eval                      score retrieval on eval/questions.csv
   python -m ckb ifc path/to/model.ifc     load a BIM model into DuckDB and export ifc_summary.csv
+  python -m ckb powerbi                   write exports/ckb_powerbi.xlsx (one Excel table per sheet)
 """
 from __future__ import annotations
 
@@ -32,6 +33,7 @@ def main() -> None:
     sub.add_parser("eval")
     i = sub.add_parser("ifc")
     i.add_argument("path", type=Path)
+    sub.add_parser("powerbi")
     args = p.parse_args()
 
     if args.cmd == "build":
@@ -49,6 +51,13 @@ def main() -> None:
         print(con.execute("SELECT * FROM ifc_summary WHERE model = ?", [args.path.stem]).df().to_string(index=False))
         print()
         print(con.execute("SELECT * FROM ifc_quality").df().to_string(index=False))
+        return
+
+    if args.cmd == "powerbi":
+        from .powerbi import export_workbook
+        out = ROOT / "exports" / "ckb_powerbi.xlsx"
+        print("sheets:", export_workbook(con, ROOT, out))
+        print("written:", out)
         return
 
     index = BM25Index(search_rows(con))
