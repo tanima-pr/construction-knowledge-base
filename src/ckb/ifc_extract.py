@@ -1,7 +1,7 @@
 """Pull building elements and their quantities out of an IFC (BIM) model into DuckDB.
 
 Tables:
-  ifc_elements(model, global_id, ifc_class, name, storey, type_name, material)
+  ifc_elements(model, global_id, ifc_class, name, storey, type_name, material, x, y, z, dir_x, dir_y)
   ifc_quantities(model, global_id, ifc_class, qto_set, quantity, value, unit_kind, unit)
 Views:
   ifc_summary - element counts and summed quantities (m, m2, m3) by storey and class
@@ -16,6 +16,7 @@ from pathlib import Path
 
 import ifcopenshell
 import ifcopenshell.util.element as eu
+import ifcopenshell.util.placement as up
 import ifcopenshell.util.unit as uu
 
 # IFC quantity class -> (value attribute, kind, IFC unit type for scaling, SI unit label)
@@ -29,7 +30,8 @@ QTY_ATTRS = {
 
 DDL = """
 CREATE TABLE IF NOT EXISTS ifc_elements (model VARCHAR, global_id VARCHAR, ifc_class VARCHAR, name VARCHAR,
-    storey VARCHAR, type_name VARCHAR, material VARCHAR);
+    storey VARCHAR, type_name VARCHAR, material VARCHAR,
+    x DOUBLE, y DOUBLE, z DOUBLE, dir_x DOUBLE, dir_y DOUBLE);   -- placement origin (m) and local x-axis
 CREATE TABLE IF NOT EXISTS ifc_quantities (model VARCHAR, global_id VARCHAR, ifc_class VARCHAR, qto_set VARCHAR,
     quantity VARCHAR, value DOUBLE, unit_kind VARCHAR, unit VARCHAR);
 CREATE OR REPLACE VIEW ifc_summary AS
@@ -78,8 +80,14 @@ def extract(ifc_path: Path) -> tuple[list[tuple], list[tuple]]:
             continue
         storey = eu.get_container(el)
         etype = eu.get_type(el)
+        x = y = z = dx = dy = None
+        if el.ObjectPlacement is not None:
+            m = up.get_local_placement(el.ObjectPlacement)
+            x, y, z = (round(float(v) * scale["LENGTHUNIT"], 3) for v in m[:3, 3])
+            dx, dy = (round(float(v), 3) for v in m[:2, 0])
         elements.append((model_name, el.GlobalId, el.is_a(), el.Name,
-                         storey.Name if storey else None, etype.Name if etype else None, _material(el)))
+                         storey.Name if storey else None, etype.Name if etype else None, _material(el),
+                         x, y, z, dx, dy))
         for rel in getattr(el, "IsDefinedBy", []) or []:
             if not rel.is_a("IfcRelDefinesByProperties"):
                 continue
@@ -96,14 +104,24 @@ def extract(ifc_path: Path) -> tuple[list[tuple], list[tuple]]:
     return elements, quantities
 
 
+def _upgrade(con) -> None:
+    """Older databases lack the placement columns: drop the derived IFC tables so they are rebuilt."""
+    cols = {r[0] for r in con.execute(
+        "SELECT column_name FROM information_schema.columns WHERE table_name = 'ifc_elements'").fetchall()}
+    if cols and "x" not in cols:
+        con.execute("DROP VIEW IF EXISTS ifc_summary; DROP VIEW IF EXISTS ifc_quality;"
+                    "DROP TABLE ifc_elements; DROP TABLE IF EXISTS ifc_quantities;")
+
+
 def load(con, ifc_path: Path) -> dict:
+    _upgrade(con)
     con.execute(DDL)
     elements, quantities = extract(ifc_path)
     model = ifc_path.stem
     con.execute("DELETE FROM ifc_elements WHERE model = ?", [model])
     con.execute("DELETE FROM ifc_quantities WHERE model = ?", [model])
     if elements:
-        con.executemany("INSERT INTO ifc_elements VALUES (?,?,?,?,?,?,?)", elements)
+        con.executemany("INSERT INTO ifc_elements VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", elements)
     if quantities:
         con.executemany("INSERT INTO ifc_quantities VALUES (?,?,?,?,?,?,?,?)", quantities)
     return {"model": model, "elements": len(elements), "quantities": len(quantities)}

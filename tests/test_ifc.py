@@ -28,6 +28,9 @@ def _tiny_model(path: Path) -> None:
             ifcopenshell.api.run("material.assign_material", f, products=[wall], material=concrete)
             qto = ifcopenshell.api.run("pset.add_qto", f, product=wall, name="Qto_WallBaseQuantities")
             ifcopenshell.api.run("pset.edit_qto", f, qto=qto, properties={"NetVolume": 2.5, "Length": 4.0})
+    import numpy as np
+    m = np.eye(4); m[0, 3], m[1, 3] = 2.5, 1.0             # given in metres; the file stores millimetres
+    ifcopenshell.api.run("geometry.edit_object_placement", f, product=wall, matrix=m)
     slab = ifcopenshell.api.run("root.create_entity", f, ifc_class="IfcSlab", name="S1")
     ifcopenshell.api.run("spatial.assign_container", f, relating_structure=ground, products=[slab])
     f.write(str(path))
@@ -49,6 +52,9 @@ def test_ifc_extract_counts_and_quantities(tmp_path):
     q = con.execute("SELECT elements, share_with_storey, share_with_material, share_proxy FROM ifc_quality").fetchone()
     assert q == (6, 1.0, round(5 / 6, 3), 0.0)
     assert con.execute("SELECT DISTINCT material FROM ifc_elements WHERE ifc_class='IfcWall'").fetchone()[0] == "Concrete"
+    # placements come back in metres (the file stores 2500 mm, 1000 mm)
+    placed = con.execute("SELECT x, y, dir_x, dir_y FROM ifc_elements WHERE x IS NOT NULL").fetchall()
+    assert placed == [(2.5, 1.0, 1.0, 0.0)]
     # reloading the same model replaces rather than duplicates
     load(con, model)
     assert con.execute("SELECT count(*) FROM ifc_elements").fetchone()[0] == 6

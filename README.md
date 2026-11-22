@@ -57,7 +57,7 @@ src/ckb/ingest.py        PDF text extraction and page-aware chunking
 src/ckb/search.py        BM25 ranking with access-level filter
 src/ckb/answer.py        cited answers, refusal, LLM guardrail
 src/ckb/evaluate.py      retrieval metrics
-src/ckb/ifc_extract.py   IFC elements and quantities -> DuckDB (SI units, quality view)
+src/ckb/ifc_extract.py   IFC elements, placements and quantities -> DuckDB (SI units, quality view)
 src/ckb/pipeline.py      build + CSV exports
 tests/                   pytest suite (runs in GitHub Actions)
 ```
@@ -93,7 +93,9 @@ tuned on the same 30 questions, so it should be confirmed on new questions befor
 
 Remaining errors: the two false refusals are paraphrases ("climb or descend" vs the code's "travel up or
 down"; "words the code does not define" vs "undefined terms"), and one cost question still slips through.
-The same keyword limitation explains most page misses, so meaning-based (embedding) search is the next step.
+Of the five page misses, three land on summary or appendix pages that repeat the question's words, one is
+a paraphrase and one is two pages off. Meaning-based (embedding) search and down-weighting summary pages are
+the next steps. Full write-up: [docs/REPORT.md](docs/REPORT.md).
 
 ## Power BI report
 
@@ -101,7 +103,11 @@ The same keyword limitation explains most page misses, so meaning-based (embeddi
 
 - **Page 1, Governance and search quality:** sources catalogued, chunks indexed, page accuracy, refusal before
   and after the coverage check, the threshold trade-off, and the questions where search missed the page.
-- **Page 2, BIM model quality:** completeness by model and the architectural vs structural wall comparison.
+- **Page 2, BIM model quality:** completeness by model and the architectural vs structural wall totals.
+
+![Power BI page 1: governance and search quality](docs/powerbi-page1.png)
+
+![Power BI page 2: BIM model quality and wall totals by model](docs/powerbi-page2.png)
 
 ## BIM model results
 
@@ -119,9 +125,24 @@ beam cross-section), so different measures are never added together.
 | Architectural | 13 | 100% | 92% | 54% | 23% |
 | Structural | 17 | 100% | 94% | 59% | 12% |
 
-**Cross-model check.** Both models contain the same 4 ground-floor walls, but they disagree: 15.8 m and
-7.45 m3 in the architectural model vs 14.2 m and 11.0 m3 in the structural one. A difference like this is
-what a coordination review between disciplines would need to resolve before quantities are used for costing.
+**Cross-model check.** Compared by class, the two models seem to disagree about the ground-floor walls:
+15.8 m and 7.45 m3 (architectural) vs 14.2 m and 11.0 m3 (structural). Checking each wall's placement shows
+that comparison is wrong: **no wall appears in both models.** The architectural model holds the walls running
+one direction plus a 24 mm gypsum plumbing partition; the structural model holds the walls running the other
+direction plus a 200 mm load-bearing inner wall. The models are complementary, so the house's walls total
+30.0 m and 18.5 m3 across both. Cross-discipline checks need to match elements by location or ID, not by
+class totals, or they report discrepancies that do not exist.
+
+| Model | Wall | Position (m) | Direction | Length (m) | Width (m) | Volume (m3) |
+|---|---|---|---|---|---|---|
+| Architectural | outer, left | (3.1, 3.0) | y | 6.0 | 0.200 | 4.23 |
+| Architectural | outer, right back | (8.5, 9.0) | y | 4.2 | 0.200 | 1.79 |
+| Architectural | outer, right front | (7.1, 4.8) | y | 1.8 | 0.200 | 1.27 |
+| Architectural | plumbing partition | (8.4, 8.8) | y | 3.8 | 0.024 | 0.16 |
+| Structural | outer, front | (3.0, 3.0) | x | 3.8 | 0.200 | 2.93 |
+| Structural | outer, back | (3.2, 8.9) | x | 5.2 | 0.200 | 4.29 |
+| Structural | outer, front right | (8.4, 4.9) | x | 1.3 | 0.200 | 0.75 |
+| Structural | inner, load-bearing | (7.1, 4.9) | x | 3.9 | 0.200 | 3.04 |
 
 ## Limitations
 
