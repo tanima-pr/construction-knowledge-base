@@ -1,9 +1,31 @@
-question,expected_doc_id,expected_page,answerable
-# Write 25-30 questions YOU checked against the PDFs. Suggested mix:,,,
-#   10 from nbc-2025 (definitions and specific articles - put the page you found it on),,,
-#   8 from ic-roadmap-2025 (industrialized construction terms - barriers - recommendations),,,
-#   4 from ic-roadmap-2025-summary or CMHC reports,,,
-#   3 that need the right document out of several similar ones,,,
-#   5 the documents do NOT answer (answerable = no) - tests that the system refuses instead of guessing,,,
-What is the average hourly wage of a modular factory worker in Ottawa?,,,no
-Which construction firm won the 2026 Canadian modular housing award?,,,no
+question,expected_doc_id,expected_page,answerable,evidence
+What is the maximum vertical height of a single flight of stairs?,nbc-2025,883,yes,9.8.3.3: flight height shall not exceed 3.7 m
+How wide must exit stairs be in a residential building?,nbc-2025,882,yes,9.8.2.1: not less than 900 mm
+What is the steepest slope allowed for a ramp serving a dwelling unit?,nbc-2025,886,yes,9.8.5.4: not more than 1 in 10
+How high do guards need to be inside a house?,nbc-2025,891,yes,9.8.8.3(2): not less than 900 mm within dwelling units
+What is the minimum height for guards outside dwelling units?,nbc-2025,891,yes,9.8.8.3(1): not less than 1070 mm
+Where are smoke alarms required in residential buildings?,nbc-2025,939,yes,"9.10.19.1: each dwelling unit, each sleeping room not in a dwelling unit..."
+Which standard must smoke alarms conform to?,nbc-2025,939,yes,9.10.19.1: CAN/ULC-S531
+How does the code protect homes from radon coming in from the ground?,nbc-2025,952,yes,9.13.4.2: air barrier system giving radon gas diffusion protection
+In a two-storey home how far may you have to climb or descend to reach an exit?,nbc-2025,903,yes,9.9.9.1: not more than 1 storey
+How should words that the code does not define be interpreted?,nbc-2025,26,yes,"1.4.1.1: meanings commonly assigned in context, incl. trade usage"
+What are the four categories of industrialized construction?,ic-roadmap-2025,12,yes,"2.1: OSC, additive manufacturing, product-led and process-led site labour reduction"
+What is the difference between volumetric and panelized off-site construction?,ic-roadmap-2025,12,yes,2.1: volumetric (3D modular) vs panelized (2D) components
+What barriers to off-site construction does the literature identify?,ic-roadmap-2025,13,yes,"2.1.1: high investment costs, technical difficulties, logistics, lack of design standards"
+What share of the construction workforce is expected to retire by 2033?,ic-roadmap-2025,16,yes,"2.2.3: 21% (over a quarter-million workers), BuildForce Canada"
+How many housing units does CMHC say Canada needs by 2030?,ic-roadmap-2025,17,yes,2.2.4: about 3.5 million units to restore 2004 affordability
+Where were the regional workshops for the roadmap held?,ic-roadmap-2025,26,yes,3.1: Edmonton (Western) and Toronto (Eastern)
+Which CCDC contracts should be adapted first for industrialized construction?,ic-roadmap-2025,37,yes,PM3: begin with CCDC-5B and CCDC-14
+What financial measures does the roadmap propose to reduce risk for IC projects?,ic-roadmap-2025,37,yes,"FI1-FI4: government underwriting, tax incentives, flexible R&D funding, structured finance"
+What is the top priority before the roadmap initiatives can be executed?,ic-roadmap-2025,66,yes,5.0: federal national IC framework (adopt UK MMC) by end of Dec 2025
+What are the drivers for change behind the IC roadmap?,ic-roadmap-2025-summary,1,yes,"Housing shortages, low productivity, aging workforce, sustainability"
+What does the Quantifying Capacity and Capability for OSC focus area involve?,ic-roadmap-2025-summary,1,yes,"Map supply chain, assess readiness"
+What role do the regional spokes play in the proposed hub-and-spoke model?,ic-roadmap-2025-summary,2,yes,"Lead local and regional initiatives, collaborate nationally through CoE"
+Who prepared the industrialized construction roadmap and for which NRC program?,ic-roadmap-2025,2,yes,Prepared for NRC CRC CSDP program by NRC + UNB OCRC authors
+Which roadmap initiative addresses inefficiencies in building codes?,ic-roadmap-2025,35,yes,PR3: identify inefficiencies in codes and policies (flexible codes) - must NOT answer from the NBC itself
+What immediate next steps involve a national construction productivity framework?,ic-roadmap-2025,67,yes,Next steps: establish data collection of a national construction productivity framework; data housed with StatCan
+What is the average hourly wage of a modular factory worker in Ottawa?,,,no,Not covered
+Which construction firm won the 2026 Canadian modular housing award?,,,no,Not covered
+How much does a volumetric modular home cost per square foot in Ontario?,,,no,Not covered
+What is the maximum building height allowed by the City of Toronto zoning bylaw?,,,no,Municipal bylaw - not in these documents
+How much funding did the NRC allocate to industrialized construction research in 2026?,,,no,Not covered

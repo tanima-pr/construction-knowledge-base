@@ -1,0 +1,31 @@
+question,expected_doc_id,expected_page,answerable,rank,top_doc,top_page,page_hit,refused
+What is the maximum vertical height of a single flight of stairs?,nbc-2025,883,yes,1,nbc-2025,883,True,False
+How wide must exit stairs be in a residential building?,nbc-2025,882,yes,1,nbc-2025,882,True,False
+What is the steepest slope allowed for a ramp serving a dwelling unit?,nbc-2025,886,yes,1,nbc-2025,886,True,False
+How high do guards need to be inside a house?,nbc-2025,891,yes,1,nbc-2025,891,True,False
+What is the minimum height for guards outside dwelling units?,nbc-2025,891,yes,1,nbc-2025,891,True,False
+Where are smoke alarms required in residential buildings?,nbc-2025,939,yes,1,nbc-2025,941,False,False
+Which standard must smoke alarms conform to?,nbc-2025,939,yes,1,nbc-2025,939,True,False
+How does the code protect homes from radon coming in from the ground?,nbc-2025,952,yes,1,nbc-2025,1503,True,False
+In a two-storey home how far may you have to climb or descend to reach an exit?,nbc-2025,903,yes,1,nbc-2025,903,True,False
+How should words that the code does not define be interpreted?,nbc-2025,26,yes,1,nbc-2025,670,False,False
+What are the four categories of industrialized construction?,ic-roadmap-2025,12,yes,2,ic-roadmap-2025-summary,1,False,False
+What is the difference between volumetric and panelized off-site construction?,ic-roadmap-2025,12,yes,1,ic-roadmap-2025,88,True,False
+What barriers to off-site construction does the literature identify?,ic-roadmap-2025,13,yes,1,ic-roadmap-2025,4,False,False
+What share of the construction workforce is expected to retire by 2033?,ic-roadmap-2025,16,yes,1,ic-roadmap-2025,16,True,False
+How many housing units does CMHC say Canada needs by 2030?,ic-roadmap-2025,17,yes,1,ic-roadmap-2025,17,True,False
+Where were the regional workshops for the roadmap held?,ic-roadmap-2025,26,yes,1,ic-roadmap-2025,26,True,False
+Which CCDC contracts should be adapted first for industrialized construction?,ic-roadmap-2025,37,yes,1,ic-roadmap-2025,37,True,False
+What financial measures does the roadmap propose to reduce risk for IC projects?,ic-roadmap-2025,37,yes,1,ic-roadmap-2025,37,True,False
+What is the top priority before the roadmap initiatives can be executed?,ic-roadmap-2025,66,yes,1,ic-roadmap-2025,66,True,False
+What are the drivers for change behind the IC roadmap?,ic-roadmap-2025-summary,1,yes,2,ic-roadmap-2025,15,True,False
+What does the Quantifying Capacity and Capability for OSC focus area involve?,ic-roadmap-2025-summary,1,yes,5,ic-roadmap-2025,38,True,False
+What role do the regional spokes play in the proposed hub-and-spoke model?,ic-roadmap-2025-summary,2,yes,1,ic-roadmap-2025-summary,2,True,False
+Who prepared the industrialized construction roadmap and for which NRC program?,ic-roadmap-2025,2,yes,1,ic-roadmap-2025,2,True,False
+Which roadmap initiative addresses inefficiencies in building codes?,ic-roadmap-2025,35,yes,1,ic-roadmap-2025,81,False,False
+What immediate next steps involve a national construction productivity framework?,ic-roadmap-2025,67,yes,1,ic-roadmap-2025,67,True,False
+What is the average hourly wage of a modular factory worker in Ottawa?,,,no,,ic-roadmap-2025,22,,False
+Which construction firm won the 2026 Canadian modular housing award?,,,no,,ic-roadmap-2025,21,,False
+How much does a volumetric modular home cost per square foot in Ontario?,,,no,,ic-roadmap-2025,24,,False
+What is the maximum building height allowed by the City of Toronto zoning bylaw?,,,no,,ic-roadmap-2025,76,,False
+How much funding did the NRC allocate to industrialized construction research in 2026?,,,no,,ic-roadmap-2025,67,,False
