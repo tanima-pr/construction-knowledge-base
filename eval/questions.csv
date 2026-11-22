@@ -1,0 +1,9 @@
+question,expected_doc_id,expected_page,answerable
+# Write 25-30 questions YOU checked against the PDFs. Suggested mix:,,,
+#   10 from nbc-2025 (definitions and specific articles - put the page you found it on),,,
+#   8 from ic-roadmap-2025 (industrialized construction terms - barriers - recommendations),,,
+#   4 from ic-roadmap-2025-summary or CMHC reports,,,
+#   3 that need the right document out of several similar ones,,,
+#   5 the documents do NOT answer (answerable = no) - tests that the system refuses instead of guessing,,,
+What is the average hourly wage of a modular factory worker in Ottawa?,,,no
+Which construction firm won the 2026 Canadian modular housing award?,,,no

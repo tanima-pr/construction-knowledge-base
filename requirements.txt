@@ -1,0 +1,6 @@
+duckdb>=1.0
+pypdf>=4.0
+ifcopenshell>=0.8
+pandas>=2.0
+pytest>=8.0
+reportlab>=4.0

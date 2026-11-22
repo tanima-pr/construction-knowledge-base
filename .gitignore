@@ -1,0 +1,9 @@
+# Source PDFs and IFC models are not redistributed: download them from the URLs in sources/register.csv
+data/raw/*
+!data/raw/.gitkeep
+data/*.duckdb
+data/*.duckdb.wal
+__pycache__/
+.pytest_cache/
+exports/.old_*
+.venv/

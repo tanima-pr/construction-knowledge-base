@@ -1,0 +1,49 @@
+from pathlib import Path
+
+import duckdb
+import pytest
+
+ifcopenshell = pytest.importorskip("ifcopenshell", exc_type=ImportError)
+import ifcopenshell.api  # noqa: E402
+
+from ckb.ifc_extract import load  # noqa: E402
+
+
+def _tiny_model(path: Path) -> None:
+    f = ifcopenshell.api.run("project.create_file", version="IFC4")
+    project = ifcopenshell.api.run("root.create_entity", f, ifc_class="IfcProject", name="Test")
+    ifcopenshell.api.run("unit.assign_unit", f)
+    site = ifcopenshell.api.run("root.create_entity", f, ifc_class="IfcSite", name="Site")
+    bldg = ifcopenshell.api.run("root.create_entity", f, ifc_class="IfcBuilding", name="Building")
+    ground = ifcopenshell.api.run("root.create_entity", f, ifc_class="IfcBuildingStorey", name="Ground")
+    level2 = ifcopenshell.api.run("root.create_entity", f, ifc_class="IfcBuildingStorey", name="Level 2")
+    ifcopenshell.api.run("aggregate.assign_object", f, relating_object=project, products=[site])
+    ifcopenshell.api.run("aggregate.assign_object", f, relating_object=site, products=[bldg])
+    ifcopenshell.api.run("aggregate.assign_object", f, relating_object=bldg, products=[ground, level2])
+    concrete = ifcopenshell.api.run("material.add_material", f, name="Concrete")
+    for storey, n in ((ground, 3), (level2, 2)):
+        for i in range(n):
+            wall = ifcopenshell.api.run("root.create_entity", f, ifc_class="IfcWall", name=f"W{i}")
+            ifcopenshell.api.run("spatial.assign_container", f, relating_structure=storey, products=[wall])
+            ifcopenshell.api.run("material.assign_material", f, products=[wall], material=concrete)
+            qto = ifcopenshell.api.run("pset.add_qto", f, product=wall, name="Qto_WallBaseQuantities")
+            ifcopenshell.api.run("pset.edit_qto", f, qto=qto, properties={"NetVolume": 2.5, "Length": 4.0})
+    slab = ifcopenshell.api.run("root.create_entity", f, ifc_class="IfcSlab", name="S1")
+    ifcopenshell.api.run("spatial.assign_container", f, relating_structure=ground, products=[slab])
+    f.write(str(path))
+
+
+def test_ifc_extract_counts_and_quantities(tmp_path):
+    model = tmp_path / "tiny.ifc"
+    _tiny_model(model)
+    con = duckdb.connect()
+    info = load(con, model)
+    assert info["elements"] == 6 and info["quantities"] == 10
+    rows = con.execute("SELECT storey, ifc_class, elements, volume FROM ifc_summary ORDER BY storey, ifc_class").fetchall()
+    assert ("Ground", "IfcWall", 3, 7.5) in rows
+    assert ("Level 2", "IfcWall", 2, 5.0) in rows
+    assert ("Ground", "IfcSlab", 1, None) in rows
+    assert con.execute("SELECT DISTINCT material FROM ifc_elements WHERE ifc_class='IfcWall'").fetchone()[0] == "Concrete"
+    # reloading the same model replaces rather than duplicates
+    load(con, model)
+    assert con.execute("SELECT count(*) FROM ifc_elements").fetchone()[0] == 6
